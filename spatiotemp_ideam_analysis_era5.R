@@ -120,7 +120,7 @@ data_excedences <- data_sisaire %>%
     threshold = case_when(parameter == "PM10" ~ 75L, parameter == "PM2.5" ~ 37L, TRUE ~ 100L),
     exceeds = ifelse(value > threshold, TRUE, FALSE)
   ) %>%
-  group_by(department, parameter, station) %>%
+  group_by(department, parameter, station, year) %>%
   reframe(rate = sum(exceeds) / n()) %>%
   group_by(department, parameter) %>%
   reframe(
@@ -130,7 +130,7 @@ data_excedences <- data_sisaire %>%
     p98 = quantile(rate, .98),
     mean_rate = mean(rate),
     sd_rate = sd(rate),
-    n_stations = n()
+    n_stations = n_distinct(station)
   )
 
 # Persist exceedance summaries
@@ -272,8 +272,6 @@ data_summary %>%
     dec = ",",
     row.names = FALSE
   )
-
-
 
 
 # ----------------------------------------------------------------------
